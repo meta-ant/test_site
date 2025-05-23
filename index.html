@@ -2,82 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MetaRouter Test Event Sender</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 2rem;
-      background-color: #f7f9fb;
-      color: #333;
-    }
-    h1 {
-      color: #0077cc;
-    }
-    textarea {
-      width: 100%;
-      height: 200px;
-      font-family: monospace;
-      font-size: 14px;
-    }
-    button {
-      margin-top: 1rem;
-      padding: 10px 20px;
-      background-color: #0077cc;
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    button:hover {
-      background-color: #005fa3;
-    }
-    .message {
-      margin-top: 1rem;
-      font-weight: bold;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MetaRouter Test</title>
 </head>
 <body>
-  <h1>Send Custom Event to MetaRouter</h1>
-  <p>Enter JSON with your event data below:</p>
-  <textarea id="eventData">
-{
-  "event": "Test Event",
-  "properties": {
-    "foo": "bar",
-    "number": 42
-  }
-}
-  </textarea>
-  <br />
-  <button onclick="submitEvent()">Send Event</button>
-  <div class="message" id="message"></div>
+  <h1>MetaRouter Event Test</h1>
 
-  <!-- Load self-hosted analytics.js -->
+  <!-- Load your self-hosted analytics.js -->
   <script src="https://meta-ant.github.io/test_site/analytics.js"></script>
-  <script>
-    analytics.load("demo_anthony"); // Replace with your actual key
-    analytics.page();
 
-    function submitEvent() {
-      const msgDiv = document.getElementById("message");
-      let data;
-      try {
-        data = JSON.parse(document.getElementById("eventData").value);
-      } catch (e) {
-        msgDiv.textContent = "❌ Invalid JSON";
-        msgDiv.style.color = "red";
-        return;
-      }
-
-      const eventName = data.event || "Unnamed Event";
-      const properties = data.properties || {};
-
-      analytics.track(eventName, properties);
-      msgDiv.textContent = "✅ Event submitted: " + eventName;
-      msgDiv.style.color = "green";
-    }
-  </script>
+  <!-- Track event button -->
+  <button onclick="analytics.track('Test Event', { category: 'UI', label: 'Button Clicked' })">
+    Send Test Event
+  </button>
 </body>
 </html>
