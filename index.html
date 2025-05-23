@@ -1,15 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script type="text/javascript">
+  (function () {
+    var analytics = (window.analytics = window.analytics || []);
+    if (!analytics.initialize) {
+      if (analytics.invoked) {
+        console.error("MetaRouter snippet included twice.");
+        return;
+      }
+
+      analytics.invoked = true;
+      analytics.methods = [
+        "trackSubmit", "trackClick", "trackLink", "trackForm", "pageview",
+        "identify", "reset", "group", "track", "ready", "alias", "page",
+        "once", "off", "on"
+      ];
+
+      analytics.factory = function (method) {
+        return function () {
+          var args = Array.prototype.slice.call(arguments);
+          args.unshift(method);
+          analytics.push(args);
+          return analytics;
+        };
+      };
+
+      for (var i = 0; i < analytics.methods.length; i++) {
+        var key = analytics.methods[i];
+        analytics[key] = analytics.factory(key);
+      }
+
+      analytics.load = function (writeKey) {
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.async = true;
+        script.src = "https://cdn.metarouter.io/demo-app/" + writeKey + ".js";
+        var first = document.getElementsByTagName("script")[0];
+        first.parentNode.insertBefore(script, first);
+      };
+
+      analytics.SNIPPET_VERSION = "4.13.1";
+      analytics.load("demo_anthony"); // CHANGE THIS TO YOUR KEY OR FILE NAME
+      analytics.page();
+    }
+  })();
+</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MetaRouter Test</title>
 </head>
+  
 <body>
   <h1>MetaRouter Event Test</h1>
-
-  <!-- Load your self-hosted analytics.js -->
-  <script src="https://meta-ant.github.io/test_site/analytics.js"></script>
 
   <!-- Track event button -->
   <button onclick="analytics.track('Test Event', { category: 'UI', label: 'Button Clicked' })">
