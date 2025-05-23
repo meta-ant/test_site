@@ -42,10 +42,18 @@
         analytics[key] = analytics.factory(key);
       }
 
-      // Self-hosted version — remove load() to prevent double execution
-      analytics.SNIPPET_VERSION = '4.13.1';
+      analytics.load = function(key, options) {
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.async = true;
+        script.src = "https://ajs.metarouter.io/" + key + ".js";
+        var first = document.getElementsByTagName('script')[0];
+        first.parentNode.insertBefore(script, first);
+        analytics._loadOptions = options;
+      };
 
-      // Call page on initial load
+      analytics.SNIPPET_VERSION = '4.13.1';
+      analytics.load("demo_anthony");
       analytics.page();
     }
   }
