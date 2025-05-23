@@ -2,97 +2,82 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MetaRouter Event Tester</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MetaRouter Test Event Sender</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 600px;
-      margin: 50px auto;
+      margin: 2rem;
+      background-color: #f7f9fb;
+      color: #333;
     }
-    input, textarea, button {
+    h1 {
+      color: #0077cc;
+    }
+    textarea {
       width: 100%;
-      padding: 10px;
-      margin: 10px 0;
+      height: 200px;
+      font-family: monospace;
+      font-size: 14px;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 10px 20px;
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      cursor: pointer;
       font-size: 16px;
     }
-    label {
+    button:hover {
+      background-color: #005fa3;
+    }
+    .message {
+      margin-top: 1rem;
       font-weight: bold;
     }
   </style>
 </head>
 <body>
+  <h1>Send Custom Event to MetaRouter</h1>
+  <p>Enter JSON with your event data below:</p>
+  <textarea id="eventData">
+{
+  "event": "Test Event",
+  "properties": {
+    "foo": "bar",
+    "number": 42
+  }
+}
+  </textarea>
+  <br />
+  <button onclick="submitEvent()">Send Event</button>
+  <div class="message" id="message"></div>
 
-<h1>MetaRouter Event Submission</h1>
+  <!-- Load self-hosted analytics.js -->
+  <script src="https://meta-ant.github.io/test_site/analytics.js"></script>
+  <script>
+    analytics.load("demo_anthony"); // Replace with your actual key
+    analytics.page();
 
-<form id="eventForm">
-  <label for="eventName">Event Name</label>
-  <input type="text" id="eventName" placeholder="e.g., User Signed Up" required />
-
-  <label for="eventProps">Event Properties (JSON)</label>
-  <textarea id="eventProps" rows="6" placeholder='e.g., {"plan": "premium", "referral": "friend"}'></textarea>
-
-  <button type="submit">Submit Event</button>
-</form>
-
-<script type="text/javascript">
-  !(function() {
-    var analytics = (window.analytics = window.analytics || []);
-    if (!analytics.initialize) {
-      if (analytics.invoked) {
-        window.console && console.error && console.error('Analytics.js snippet included twice.');
-      } else {
-        analytics.invoked = true;
-        analytics.methods = [
-          'trackSubmit','trackClick','trackLink','trackForm','pageview','identify','reset','group','track','ready',
-          'alias','debug','page','once','off','on','addSourceMiddleware','addIntegrationMiddleware',
-          'setAnonymousId','addDestinationMiddleware'
-        ];
-        analytics.factory = function(e) {
-          return function() {
-            var t = Array.prototype.slice.call(arguments);
-            t.unshift(e);
-            analytics.push(t);
-            return analytics;
-          };
-        };
-        for (var e = 0; e < analytics.methods.length; e++) {
-          var key = analytics.methods[e];
-          analytics[key] = analytics.factory(key);
-        }
-        analytics.load = function(key, e) {
-          var t = document.createElement('script');
-          t.type = 'text/javascript';
-          t.async = true;
-          t.src = "https://meta-ant.github.io/test_site/analytics.js"          
-          var n = document.getElementsByTagName('script')[0];
-          n.parentNode.insertBefore(t, n);
-          analytics._loadOptions = e;
-        };
-        analytics.SNIPPET_VERSION = '4.13.1';
-        analytics.load("demo_anthony");
-        analytics.page();
+    function submitEvent() {
+      const msgDiv = document.getElementById("message");
+      let data;
+      try {
+        data = JSON.parse(document.getElementById("eventData").value);
+      } catch (e) {
+        msgDiv.textContent = "❌ Invalid JSON";
+        msgDiv.style.color = "red";
+        return;
       }
-    }
-  })();
 
-  document.getElementById('eventForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const name = document.getElementById('eventName').value.trim();
-    let props = {};
-    try {
-      const rawProps = document.getElementById('eventProps').value.trim();
-      props = rawProps ? JSON.parse(rawProps) : {};
-    } catch (err) {
-      alert('Invalid JSON in event properties.');
-      return;
-    }
-    if (name) {
-      window.analytics.track(name, props);
-      alert(`Event "${name}" sent successfully!`);
-    }
-  });
-</script>
+      const eventName = data.event || "Unnamed Event";
+      const properties = data.properties || {};
 
+      analytics.track(eventName, properties);
+      msgDiv.textContent = "✅ Event submitted: " + eventName;
+      msgDiv.style.color = "green";
+    }
+  </script>
 </body>
 </html>
