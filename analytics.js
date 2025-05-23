@@ -41,18 +41,12 @@
         var key = analytics.methods[e];
         analytics[key] = analytics.factory(key);
       }
-      analytics.load = function(key, e) {
-        var t = document.createElement('script');
-        t.type = 'text/javascript';
-        t.async = !0;
-        t.src = "https://meta-ant.github.io/test_site/analytics.js";
-        var n = document.getElementsByTagName('script')[0];
-        n.parentNode.insertBefore(t, n);
-        analytics._loadOptions = e;
-      };
+
+      // Self-hosted version — remove load() to prevent double execution
       analytics.SNIPPET_VERSION = '4.13.1';
-      analytics.load("demo_anthony");
-      window.analytics.page();
+
+      // Call page on initial load
+      analytics.page();
     }
   }
 })();
