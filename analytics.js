@@ -1,4 +1,3 @@
-<script type='text/javascript'>
 !(function() {
   var analytics = (window.analytics = window.analytics || []);
   if (!analytics.initialize) {
@@ -57,4 +56,3 @@
     }
   }
 })();
-</script>
