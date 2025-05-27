@@ -3,6 +3,66 @@
 <head>
   <meta charset="UTF-8" />
   <title>MetaRouter Test</title>
+
+<script type='text/javascript'>
+!(function() {
+  
+  var analytics = (window.analytics = window.analytics || [])
+  if (!analytics.initialize) {
+    if (analytics.invoked) {
+      window.console && console.error && console.error('Analytics.js snippet included twice.')
+    } else {
+      analytics.invoked = !0
+      analytics.methods = [
+        'trackSubmit',
+        'trackClick',
+        'trackLink',
+        'trackForm',
+        'pageview',
+        'identify',
+        'reset',
+        'group',
+        'track',
+        'ready',
+        'alias',
+        'debug',
+        'page',
+        'once',
+        'off',
+        'on',
+        'addSourceMiddleware',
+        'addIntegrationMiddleware',
+        'setAnonymousId',
+        'addDestinationMiddleware',
+      ]
+      analytics.factory = function(e) {
+        return function() {
+          var t = Array.prototype.slice.call(arguments)
+          t.unshift(e)
+          analytics.push(t)
+          return analytics
+        }
+      }
+      for (var e = 0; e < analytics.methods.length; e++) {
+        var key = analytics.methods[e]
+        analytics[key] = analytics.factory(key)
+      }
+      analytics.load = function(key, e) {
+        var t = document.createElement('script')
+        t.type = 'text/javascript'
+        t.async = !0
+        t.src = ("https:"===document.location.protocol?"https://":"http://")+"meta-ant.github.io/test_site/analytics.js/"+key+".js"
+        var n = document.getElementsByTagName('script')[0]
+        n.parentNode.insertBefore(t, n)
+        analytics._loadOptions = e
+      }
+      analytics.SNIPPET_VERSION = '4.13.1'
+      analytics.load("demo_anthony")
+      window.analytics.page()
+    }
+  }
+})()
+</script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -49,44 +109,7 @@
 
   <!-- MetaRouter Snippet -->
   <script type="text/javascript">
-    !(function() {
-      var analytics = (window.analytics = window.analytics || []);
-      if (!analytics.initialize) {
-        if (analytics.invoked) {
-          console.error("MetaRouter snippet included twice.");
-        } else {
-          analytics.invoked = true;
-          analytics.methods = [
-            "trackSubmit", "trackClick", "trackLink", "trackForm",
-            "pageview", "identify", "reset", "group", "track", "ready",
-            "alias", "page", "once", "off", "on"
-          ];
-          analytics.factory = function(method) {
-            return function() {
-              var args = Array.prototype.slice.call(arguments);
-              args.unshift(method);
-              analytics.push(args);
-              return analytics;
-            };
-          };
-          for (var i = 0; i < analytics.methods.length; i++) {
-            var method = analytics.methods[i];
-            analytics[method] = analytics.factory(method);
-          }
-          analytics.load = function(key) {
-            var script = document.createElement("script");
-            script.type = "text/javascript";
-            script.async = true;
-            script.src = "https://ajs.metarouter.io/" + key + ".js";
-            var first = document.getElementsByTagName("script")[0];
-            first.parentNode.insertBefore(script, first);
-          };
-          analytics.SNIPPET_VERSION = "4.13.1";
-          analytics.load("demo_anthony");
-          analytics.page();
-        }
-      }
-    })();
+
 
     const eventProperties = {
       "User Signup": {
