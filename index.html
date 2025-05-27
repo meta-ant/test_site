@@ -65,26 +65,133 @@
 </script>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(120deg, #f0f4f8 0%, #e9eafc 100%);
+      min-height: 100vh;
       display: flex;
-      gap: 20px;
-      padding: 20px;
+      gap: 32px;
+      padding: 40px;
+      margin: 0;
     }
     .container {
       flex: 1;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 6px 32px rgba(52, 152, 219, 0.08), 0 1.5px 6px rgba(44, 62, 80, 0.04);
+      padding: 32px 32px 24px 32px;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
     }
-    .payload {
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #2d3a4a;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    label {
+      font-size: 1rem;
+      color: #34495e;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    select, input[type="text"], input[type="number"] {
+      border: 1.5px solid #d0d7e2;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 1rem;
+      background: #f9fafb;
+      transition: border 0.2s;
+      outline: none;
+    }
+    select:focus, input:focus {
+      border-color: #3498db;
+      background: #fff;
+    }
+    #customEventInput {
+      margin-top: 8px;
+    }
+    .properties-form {
+      margin-top: 12px;
+      background: #f8fafd;
+      padding: 18px 14px 10px 14px;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(52, 152, 219, 0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .property-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 2px;
+    }
+    .property-row input[type="text"], .property-row input[type="number"] {
+      width: 130px;
+    }
+    .property-row button {
+      background: #e74c3c;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 5px 12px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.2s;
+    }
+    .property-row button:hover {
+      background: #c0392b;
+    }
+    .add-prop-btn {
+      background: #3498db;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 7px 16px;
+      cursor: pointer;
+      font-size: 15px;
+      margin-top: 8px;
+      align-self: flex-start;
+      transition: background 0.2s;
+    }
+    .add-prop-btn:hover {
+      background: #217dbb;
+    }
+    button[type="button"] {
+      box-shadow: 0 1px 4px rgba(52, 152, 219, 0.08);
+    }
+    button[type="button"]:active {
+      transform: scale(0.98);
+    }
+    #payloadDisplay, .payload {
       flex: 1;
-      background: #f4f4f4;
-      padding: 20px;
-      border-radius: 8px;
+      background: #232946;
+      color: #e7eaf6;
+      padding: 24px;
+      border-radius: 14px;
       white-space: pre-wrap;
-      font-family: monospace;
-    }
-    select, button {
-      margin-top: 10px;
-      padding: 10px;
+      font-family: 'Fira Mono', 'Consolas', monospace;
       font-size: 16px;
+      line-height: 1.6;
+      box-shadow: 0 2px 12px rgba(44, 62, 80, 0.07);
+      margin-left: 12px;
+      min-width: 340px;
+      max-width: 540px;
+      word-break: break-word;
+    }
+    @media (max-width: 900px) {
+      body {
+        flex-direction: column;
+        padding: 16px;
+        gap: 16px;
+      }
+      .container, #payloadDisplay, .payload {
+        max-width: 100%;
+        margin-left: 0;
+      }
     }
   </style>
 </head>
@@ -92,25 +199,32 @@
   <div class="container">
     <h1>MetaRouter Test Page</h1>
 
-    <label for="eventSelect">Choose an event:</label>
-    <select id="eventSelect" onchange="updatePayloadPreview()">
-      <option value="User Signup">User Signup</option>
-      <option value="Product Viewed">Product Viewed</option>
-      <option value="Checkout Started">Checkout Started</option>
-      <option value="Order Completed">Order Completed</option>
+    <label for="eventTypeSelect">Event type:</label>
+    <select id="eventTypeSelect" onchange="handleEventTypeChange()">
+      <option value="predefined">Predefined Event</option>
+      <option value="custom">Custom Event</option>
     </select>
 
-    <button onclick="sendEvent()">Send Event</button>
+    <div id="eventNameWrapper" style="margin-top:10px;">
+      <label for="eventSelect" id="eventSelectLabel">Choose an event:</label>
+      <select id="eventSelect" onchange="renderPropertiesForm()">
+        <option value="User Signup">User Signup</option>
+        <option value="Product Viewed">Product Viewed</option>
+        <option value="Checkout Started">Checkout Started</option>
+        <option value="Order Completed">Order Completed</option>
+      </select>
+      <input id="customEventInput" type="text" placeholder="Custom Event Name" style="display:none; width:220px; padding:8px; font-size:15px; margin-top:5px;" oninput="renderPropertiesForm()" />
+    </div>
+
+    <form id="propertiesForm" class="properties-form" oninput="updatePayloadPreview()"></form>
+    <button onclick="sendEvent()" type="button" style="margin-top:20px;">Send Event</button>
   </div>
 
   <div class="payload" id="payloadDisplay">
     Event payload will appear here...
   </div>
 
-  <!-- MetaRouter Snippet -->
   <script type="text/javascript">
-
-
     const eventProperties = {
       "User Signup": {
         category: "User",
@@ -135,9 +249,109 @@
       }
     };
 
+    let currentProperties = {};
+
+    function handleEventTypeChange() {
+      const type = document.getElementById('eventTypeSelect').value;
+      const eventSelect = document.getElementById('eventSelect');
+      const customInput = document.getElementById('customEventInput');
+      const label = document.getElementById('eventSelectLabel');
+      if (type === 'predefined') {
+        eventSelect.style.display = '';
+        customInput.style.display = 'none';
+        label.textContent = 'Choose an event:';
+      } else {
+        eventSelect.style.display = 'none';
+        customInput.style.display = '';
+        label.textContent = 'Custom event name:';
+      }
+      renderPropertiesForm();
+    }
+
+    function renderPropertiesForm() {
+      const type = document.getElementById('eventTypeSelect').value;
+      let eventName;
+      if (type === 'predefined') {
+        eventName = document.getElementById('eventSelect').value;
+        currentProperties = JSON.parse(JSON.stringify(eventProperties[eventName]));
+      } else {
+        eventName = document.getElementById('customEventInput').value || '';
+        currentProperties = {};
+      }
+      const form = document.getElementById('propertiesForm');
+      form.innerHTML = '';
+
+      Object.entries(currentProperties).forEach(([key, value]) => {
+        form.appendChild(createPropertyRow(key, value));
+      });
+
+      // Add button to add new property
+      const addBtn = document.createElement('button');
+      addBtn.type = 'button';
+      addBtn.className = 'add-prop-btn';
+      addBtn.textContent = '+ Add Property';
+      addBtn.onclick = () => {
+        form.appendChild(createPropertyRow('', ''));
+      };
+      form.appendChild(addBtn);
+
+      updatePayloadPreview();
+    }
+
+    function createPropertyRow(key = '', value = '') {
+      const row = document.createElement('div');
+      row.className = 'property-row';
+
+      const keyInput = document.createElement('input');
+      keyInput.type = 'text';
+      keyInput.placeholder = 'Property Name';
+      keyInput.value = key;
+      keyInput.style.width = '120px';
+
+      const valueInput = document.createElement('input');
+      valueInput.type = isNaN(value) || value === '' ? 'text' : 'number';
+      valueInput.placeholder = 'Value';
+      valueInput.value = value;
+
+      keyInput.oninput = valueInput.oninput = updatePayloadPreview;
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.textContent = 'Remove';
+      removeBtn.onclick = () => {
+        row.remove();
+        updatePayloadPreview();
+      };
+
+      row.appendChild(keyInput);
+      row.appendChild(valueInput);
+      row.appendChild(removeBtn);
+
+      return row;
+    }
+
+    function getPropertiesFromForm() {
+      const rows = document.querySelectorAll('.property-row');
+      const props = {};
+      rows.forEach(row => {
+        const [keyInput, valueInput] = row.querySelectorAll('input');
+        const key = keyInput.value.trim();
+        let value = valueInput.value;
+        if (value !== '' && !isNaN(value)) value = Number(value);
+        if (key) props[key] = value;
+      });
+      return props;
+    }
+
     function updatePayloadPreview() {
-      const eventName = document.getElementById('eventSelect').value;
-      const properties = eventProperties[eventName];
+      const type = document.getElementById('eventTypeSelect').value;
+      let eventName;
+      if (type === 'predefined') {
+        eventName = document.getElementById('eventSelect').value;
+      } else {
+        eventName = document.getElementById('customEventInput').value || '';
+      }
+      const properties = getPropertiesFromForm();
 
       const payload = {
         type: 'track',
@@ -149,14 +363,22 @@
     }
 
     function sendEvent() {
-      const eventName = document.getElementById('eventSelect').value;
-      const properties = eventProperties[eventName];
+      const type = document.getElementById('eventTypeSelect').value;
+      let eventName;
+      if (type === 'predefined') {
+        eventName = document.getElementById('eventSelect').value;
+      } else {
+        eventName = document.getElementById('customEventInput').value || '';
+      }
+      const properties = getPropertiesFromForm();
       analytics.track(eventName, properties);
+      alert('Event sent!\n\n' + JSON.stringify({event: eventName, properties}, null, 2));
     }
 
-    // Initialize payload preview on load
-    window.onload = updatePayloadPreview;
+    window.onload = function() {
+      handleEventTypeChange();
+    };
   </script>
-  
+
 </body>
 </html>
