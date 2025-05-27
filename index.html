@@ -104,7 +104,21 @@
   <div class="payload" id="payloadDisplay">
     Event payload will appear here...
   </div>
+  <script type="text/javascript">
+    function sendEvent() {
+      const eventName = document.getElementById('eventSelect').value;
+      const properties = { category: 'UI', label: 'Dropdown Event' };
+      analytics.track(eventName, properties);
 
+      const payload = {
+        type: 'track',
+        event: eventName,
+        properties: properties
+      };
+
+      document.getElementById('payloadDisplay').textContent = JSON.stringify(payload, null, 2);
+    }
+  </script>
 </body>
 </html>
 
