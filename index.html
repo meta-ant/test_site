@@ -61,17 +61,50 @@
   }
 })()
 </script>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MetaRouter Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+    }
+    .container {
+      flex: 1;
+    }
+    .payload {
+      flex: 1;
+      background: #f4f4f4;
+      padding: 20px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      font-family: monospace;
+    }
+    select, button {
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 16px;
+    }
+  </style>
 </head>
-  
 <body>
-  <h1>MetaRouter Event Test</h1>
+  <div class="container">
+    <h1>MetaRouter Test Page</h1>
 
-  <!-- Track event button -->
-  <button onclick="analytics.track('Test Event', { category: 'UI', label: 'Button Clicked' })">
-    Send Test Event
-  </button>
+    <label for="eventSelect">Choose an event:</label>
+    <select id="eventSelect">
+      <option value="User Signup">User Signup</option>
+      <option value="Product Viewed">Product Viewed</option>
+      <option value="Checkout Started">Checkout Started</option>
+      <option value="Order Completed">Order Completed</option>
+    </select>
+
+    <button onclick="sendEvent()">Send Event</button>
+  </div>
+
+  <div class="payload" id="payloadDisplay">
+    Event payload will appear here...
+  </div>
+
 </body>
 </html>
+
