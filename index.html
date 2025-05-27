@@ -1,67 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-
-<script type='text/javascript'>
-!(function() {
-  
-  var analytics = (window.analytics = window.analytics || [])
-  if (!analytics.initialize) {
-    if (analytics.invoked) {
-      window.console && console.error && console.error('Analytics.js snippet included twice.')
-    } else {
-      analytics.invoked = !0
-      analytics.methods = [
-        'trackSubmit',
-        'trackClick',
-        'trackLink',
-        'trackForm',
-        'pageview',
-        'identify',
-        'reset',
-        'group',
-        'track',
-        'ready',
-        'alias',
-        'debug',
-        'page',
-        'once',
-        'off',
-        'on',
-        'addSourceMiddleware',
-        'addIntegrationMiddleware',
-        'setAnonymousId',
-        'addDestinationMiddleware',
-      ]
-      analytics.factory = function(e) {
-        return function() {
-          var t = Array.prototype.slice.call(arguments)
-          t.unshift(e)
-          analytics.push(t)
-          return analytics
-        }
-      }
-      for (var e = 0; e < analytics.methods.length; e++) {
-        var key = analytics.methods[e]
-        analytics[key] = analytics.factory(key)
-      }
-      analytics.load = function(key, e) {
-        var t = document.createElement('script')
-        t.type = 'text/javascript'
-        t.async = !0
-        t.src = ("https:"===document.location.protocol?"https://":"http://")+"meta-ant.github.io/test_site/"+key+".js"
-        var n = document.getElementsByTagName('script')[0]
-        n.parentNode.insertBefore(t, n)
-        analytics._loadOptions = e
-      }
-      analytics.SNIPPET_VERSION = '4.13.1'
-      analytics.load("demo_anthony")
-      window.analytics.page()
-    }
-  }
-})()
-</script>
+  <meta charset="UTF-8" />
+  <title>MetaRouter Test</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -92,7 +33,7 @@
     <h1>MetaRouter Test Page</h1>
 
     <label for="eventSelect">Choose an event:</label>
-    <select id="eventSelect">
+    <select id="eventSelect" onchange="updatePayloadPreview()">
       <option value="User Signup">User Signup</option>
       <option value="Product Viewed">Product Viewed</option>
       <option value="Checkout Started">Checkout Started</option>
@@ -105,11 +46,75 @@
   <div class="payload" id="payloadDisplay">
     Event payload will appear here...
   </div>
+
+  <!-- MetaRouter Snippet -->
   <script type="text/javascript">
-    function sendEvent() {
+    !(function() {
+      var analytics = (window.analytics = window.analytics || []);
+      if (!analytics.initialize) {
+        if (analytics.invoked) {
+          console.error("MetaRouter snippet included twice.");
+        } else {
+          analytics.invoked = true;
+          analytics.methods = [
+            "trackSubmit", "trackClick", "trackLink", "trackForm",
+            "pageview", "identify", "reset", "group", "track", "ready",
+            "alias", "page", "once", "off", "on"
+          ];
+          analytics.factory = function(method) {
+            return function() {
+              var args = Array.prototype.slice.call(arguments);
+              args.unshift(method);
+              analytics.push(args);
+              return analytics;
+            };
+          };
+          for (var i = 0; i < analytics.methods.length; i++) {
+            var method = analytics.methods[i];
+            analytics[method] = analytics.factory(method);
+          }
+          analytics.load = function(key) {
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.async = true;
+            script.src = "https://ajs.metarouter.io/" + key + ".js";
+            var first = document.getElementsByTagName("script")[0];
+            first.parentNode.insertBefore(script, first);
+          };
+          analytics.SNIPPET_VERSION = "4.13.1";
+          analytics.load("demo_anthony");
+          analytics.page();
+        }
+      }
+    })();
+
+    const eventProperties = {
+      "User Signup": {
+        category: "User",
+        label: "Signup Button",
+        plan: "Free"
+      },
+      "Product Viewed": {
+        category: "Ecommerce",
+        label: "Product Page",
+        product_id: "SKU-12345"
+      },
+      "Checkout Started": {
+        category: "Ecommerce",
+        label: "Cart Page",
+        cart_value: 99.99
+      },
+      "Order Completed": {
+        category: "Ecommerce",
+        label: "Confirmation Page",
+        order_id: "ORD-98765",
+        revenue: 149.99
+      }
+    };
+
+    function updatePayloadPreview() {
       const eventName = document.getElementById('eventSelect').value;
-      const properties = { category: 'UI', label: 'Dropdown Event' };
-      analytics.track(eventName, properties);
+      const properties = eventProperties[eventName];
 
       const payload = {
         type: 'track',
@@ -119,7 +124,15 @@
 
       document.getElementById('payloadDisplay').textContent = JSON.stringify(payload, null, 2);
     }
+
+    function sendEvent() {
+      const eventName = document.getElementById('eventSelect').value;
+      const properties = eventProperties[eventName];
+      analytics.track(eventName, properties);
+    }
+
+    // Initialize payload preview on load
+    window.onload = updatePayloadPreview;
   </script>
 </body>
 </html>
-
